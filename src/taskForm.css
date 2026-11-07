@@ -1,0 +1,287 @@
+/* taskForm.css - Compact interactive Quick-Add bar & form controls */
+
+.task-input-section {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  padding: 8px 12px;
+  box-shadow: var(--shadow-xs);
+  transition: var(--transition);
+}
+
+.task-input-section:focus-within {
+  border-color: #93c5fd;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+}
+
+.input-error-banner {
+  background-color: var(--danger-light);
+  color: #991b1b;
+  border: 1px solid #fecaca;
+  border-radius: var(--radius-sm);
+  padding: 5px 10px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.task-form {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* Quick Add Single Row */
+.quick-add-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.task-input-main {
+  flex: 1;
+  padding: 7px 11px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  font-size: 0.85rem;
+  color: var(--text-main);
+  background-color: #ffffff;
+  outline: none;
+  transition: var(--transition);
+  min-width: 140px;
+}
+
+.task-input-main:focus {
+  border-color: var(--primary);
+}
+
+.quick-priority-pills {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  background-color: #f1f5f9;
+  padding: 2px;
+  border-radius: var(--radius-sm);
+}
+
+.priority-pill-btn {
+  padding: 3px 8px;
+  border: none;
+  background: transparent;
+  border-radius: 4px;
+  font-size: 0.725rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.priority-pill-btn:hover {
+  color: var(--text-main);
+}
+
+.priority-pill-btn.active.pill-low {
+  background-color: #d1fae5;
+  color: #065f46;
+  font-weight: 600;
+}
+
+.priority-pill-btn.active.pill-medium {
+  background-color: #fef3c7;
+  color: #92400e;
+  font-weight: 600;
+}
+
+.priority-pill-btn.active.pill-high {
+  background-color: #fee2e2;
+  color: #991b1b;
+  font-weight: 600;
+}
+
+.drawer-toggle-btn {
+  padding: 5px 8px;
+  background-color: transparent;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: var(--transition);
+}
+
+.drawer-toggle-btn:hover,
+.drawer-toggle-btn.active {
+  background-color: var(--bg-hover);
+  color: var(--text-main);
+  border-color: #cbd5e1;
+}
+
+/* Expandable Drawer for Details (Notes, Precise Deadline) */
+.task-form-drawer {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-top: 6px;
+  border-top: 1px dashed var(--border-color);
+  animation: drawerOpen 0.18s ease-out;
+}
+
+@keyframes drawerOpen {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.task-textarea {
+  width: 100%;
+  padding: 6px 10px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  font-size: 0.8rem;
+  font-family: inherit;
+  color: var(--text-main);
+  resize: vertical;
+  min-height: 42px;
+  outline: none;
+  transition: var(--transition);
+}
+
+.task-textarea:focus {
+  border-color: var(--primary);
+}
+
+.drawer-controls-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.quick-deadline-presets {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.preset-chip-btn {
+  padding: 3px 7px;
+  background-color: #f1f5f9;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.preset-chip-btn:hover {
+  background-color: #e2e8f0;
+  color: var(--text-main);
+}
+
+.preset-chip-btn.active {
+  background-color: var(--primary-light);
+  border-color: #bfdbfe;
+  color: var(--primary);
+  font-weight: 600;
+}
+
+.deadline-input {
+  padding: 4px 7px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  font-size: 0.75rem;
+  color: var(--text-main);
+  background-color: #ffffff;
+  outline: none;
+}
+
+.deadline-input:focus {
+  border-color: var(--primary);
+}
+
+/* Reusable Buttons */
+.btn {
+  padding: 6px 12px;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  transition: var(--transition);
+}
+
+.btn-primary {
+  background-color: var(--primary);
+  color: #ffffff;
+  box-shadow: 0 1px 2px rgba(37, 99, 235, 0.2);
+}
+
+.btn-primary:hover {
+  background-color: var(--primary-hover);
+}
+
+.btn-sm {
+  padding: 3px 7px;
+  font-size: 0.725rem;
+  font-weight: 500;
+  border-radius: 4px;
+}
+
+.btn-success {
+  background-color: var(--success-light);
+  color: #047857;
+  border: 1px solid #a7f3d0;
+}
+
+.btn-success:hover {
+  background-color: #d1fae5;
+}
+
+.btn-outline {
+  background-color: transparent;
+  border: 1px solid var(--border-color);
+  color: var(--text-muted);
+}
+
+.btn-outline:hover {
+  background-color: var(--bg-hover);
+  color: var(--text-main);
+  border-color: #cbd5e1;
+}
+
+.btn-danger {
+  background-color: var(--danger-light);
+  color: #b91c1c;
+  border: 1px solid #fecaca;
+}
+
+.btn-danger:hover {
+  background-color: #fee2e2;
+}
+
+@media (max-width: 640px) {
+  .quick-add-row {
+    flex-wrap: wrap;
+  }
+  .task-input-main {
+    width: 100%;
+  }
+}

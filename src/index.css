@@ -1,0 +1,210 @@
+/* index.css - Base styling, design variables, and compact dashboard layout */
+@import './navigation.css';
+@import './dashboard.css';
+@import './taskForm.css';
+@import './taskList.css';
+
+:root {
+  --bg-app: #f1f5f9;
+  --bg-card: #ffffff;
+  --bg-hover: #f8fafc;
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+  --border-color: #e2e8f0;
+  --border-focus: #3b82f6;
+  --primary: #2563eb;
+  --primary-hover: #1d4ed8;
+  --primary-light: #eff6ff;
+  --success: #10b981;
+  --success-light: #ecfdf5;
+  --warning: #f59e0b;
+  --warning-light: #fffbeb;
+  --danger: #ef4444;
+  --danger-light: #fef2f2;
+  --purple: #8b5cf6;
+  --purple-light: #f5f3ff;
+  --radius: 8px;
+  --radius-sm: 5px;
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+  --transition: all 0.15s ease-in-out;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  background-color: var(--bg-app);
+  color: var(--text-main);
+  line-height: 1.4;
+  padding: 10px 14px;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* App Container - Optimized max-width to display everything in a compact dashboard */
+.app-container {
+  max-width: 1140px;
+  margin: 0 auto;
+}
+
+/* Error Banner */
+.app-error-banner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: var(--danger-light);
+  border: 1px solid #fecaca;
+  color: #991b1b;
+  padding: 8px 12px;
+  border-radius: var(--radius);
+  margin-bottom: 10px;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+/* 2-Column Responsive Dashboard Layout */
+.app-layout {
+  display: grid;
+  grid-template-columns: 190px 1fr;
+  gap: 12px;
+  align-items: start;
+}
+
+.main-content {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+}
+
+/* Toast Notification Floating Pill */
+.toast-container {
+  position: fixed;
+  top: 14px;
+  right: 18px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  pointer-events: none;
+}
+
+.toast {
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  background-color: #1e293b;
+  color: #ffffff;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+  animation: toastSlideIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: opacity 0.2s ease;
+}
+
+.toast-success {
+  background-color: #065f46;
+  border: 1px solid #10b981;
+}
+
+.toast-info {
+  background-color: #1e3a8a;
+  border: 1px solid #3b82f6;
+}
+
+.toast-warning {
+  background-color: #78350f;
+  border: 1px solid #f59e0b;
+}
+
+@keyframes toastSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Custom Slim Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Compact Mode Adjustments */
+.compact-mode .task-item {
+  padding: 6px 10px;
+  gap: 8px;
+}
+
+.compact-mode .stat-card {
+  padding: 6px 10px;
+}
+
+.compact-mode .stat-value {
+  font-size: 1.1rem;
+}
+
+.compact-mode .sidebar {
+  padding: 10px;
+}
+
+.compact-mode .nav-btn {
+  padding: 6px 8px;
+  font-size: 0.8rem;
+}
+
+@media (max-width: 768px) {
+  body {
+    padding: 8px 10px;
+  }
+  .app-layout {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  .sidebar {
+    display: flex;
+    flex-direction: column;
+  }
+  .sidebar-nav {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 4px;
+  }
+  .nav-btn {
+    flex-direction: column;
+    padding: 6px 4px;
+    font-size: 0.725rem;
+    text-align: center;
+    gap: 2px;
+  }
+  .nav-badge {
+    margin-top: 2px;
+  }
+}
