@@ -1,4 +1,4 @@
-// App.jsx - Main Application Component for Modern To-Do List (Phases 1-7 Integrated)
+// App.jsx - Main Application Component for Modern To-Do List with Email OTP Authentication
 import React, { useState, useEffect } from 'react';
 import Header from './components/Header';
 import Sidebar from './components/Sidebar';
@@ -6,7 +6,12 @@ import Stats from './components/Stats';
 import ProgressBar from './components/ProgressBar';
 import TaskInput from './components/TaskInput';
 import TaskList from './components/TaskList';
+import Login from './components/Login';
+import Register from './components/Register';
+import OtpVerification from './components/OtpVerification';
 import {
+  fetchCurrentUserApi,
+  logoutApi,
   fetchTasksApi,
   createTaskApi,
   updateTaskApi,
@@ -138,70 +143,136 @@ const computeCounts = (taskList) => {
 };
 
 function App() {
+  const [currentUser, setCurrentUser] = useState(null);
+  const [isAuthChecking, setIsAuthChecking] = useState(true);
+  const [authView, setAuthView] = useState('login'); // 'login' | 'register' | 'otp'
+  const [otpContext, setOtpContext] = useState({
+    email: '',
+    purpose: 'login',
+  });
+
   const [tasks, setTasks] = useState([]);
   const [filter, setFilter] = useState('all');
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
-  const [isCompact, setIsCompact] = useState(true); // Default to sleek compact view
+  const [isCompact, setIsCompact] = useState(true);
   const [toasts, setToasts] = useState([]);
 
-  // Shows interactive toast notifications
+  // Shows interactive toast notifications.
   const showToast = (message, tone = 'info') => {
     const id = Date.now() + Math.random();
-    setToasts((prev) => [...prev, { id, message, tone }]);
+    setToasts((prev) => [
+      ...prev,
+      {
+        id,
+        message,
+        tone,
+      },
+    ]);
     setTimeout(() => {
       setToasts((prev) => prev.filter((t) => t.id !== id));
     }, 3200);
   };
 
-  // Loads all tasks from the backend API.
+  // Loads all tasks belonging to the authenticated user from the backend API.
   const loadTasks = async () => {
+    setIsLoading(true);
+    setErrorMessage('');
     try {
       const data = await fetchTasksApi();
       setTasks(data);
     } catch (err) {
       console.error('Failed to load tasks:', err);
-      setErrorMessage(err.message || 'Unable to connect to the backend server.');
+      if (err.status === 401) {
+        setCurrentUser(null);
+        setAuthView('login');
+        showToast('Session expired. Please log in again.', 'warning');
+      } else {
+        setErrorMessage(err.message || 'Unable to connect to the backend server.');
+      }
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  // Verifies existing session cookie with backend on initial application load.
+  useEffect(() => {
+    let isMounted = true;
+
+    // Checks current authentication session.
+    const checkSession = async () => {
+      try {
+        const response = await fetchCurrentUserApi();
+        if (isMounted && response && response.user) {
+          setCurrentUser(response.user);
+          loadTasks();
+        }
+      } catch (err) {
+        if (isMounted) {
+          console.debug('No active user session detected:', err.message);
+          setCurrentUser(null);
+        }
+      } finally {
+        if (isMounted) {
+          setIsAuthChecking(false);
+        }
+      }
+    };
+
+    checkSession();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  // Handles successful registration trigger transitioning user to OTP verification view.
+  const handleRegisterSuccess = ({ email, purpose }) => {
+    setOtpContext({
+      email: email,
+      purpose: purpose,
+    });
+    setAuthView('otp');
+    showToast('Verification code sent to your email.', 'info');
+  };
+
+  // Handles successful login trigger transitioning user to OTP verification view.
+  const handleLoginSuccess = ({ email, purpose }) => {
+    setOtpContext({
+      email: email,
+      purpose: purpose,
+    });
+    setAuthView('otp');
+    showToast('Verification code sent to your email.', 'info');
+  };
+
+  // Handles successful OTP verification logging user in and loading tasks.
+  const handleVerificationSuccess = (user) => {
+    setCurrentUser(user);
+    setAuthView('login');
+    loadTasks();
+    showToast(`Welcome, ${user.name}!`, 'success');
+  };
+
+  // Logs out the authenticated user, clears session cookies, and returns to login screen.
+  const handleLogout = async () => {
+    try {
+      await logoutApi();
+    } catch (err) {
+      console.error('Logout error:', err);
+    } finally {
+      setCurrentUser(null);
+      setTasks([]);
+      setAuthView('login');
+      showToast('Logged out successfully.', 'info');
     }
   };
 
   // Handles manual retry of loading tasks.
   const handleRetryLoad = () => {
     setErrorMessage('');
-    setIsLoading(true);
     loadTasks();
   };
-
-  // Effect hook to load tasks from backend upon initial mount.
-  useEffect(() => {
-    let isMounted = true;
-
-    const initializeTasks = async () => {
-      try {
-        const data = await fetchTasksApi();
-        if (isMounted) {
-          setTasks(data);
-        }
-      } catch (err) {
-        if (isMounted) {
-          console.error('Failed to load tasks:', err);
-          setErrorMessage(err.message || 'Unable to connect to the backend server.');
-        }
-      } finally {
-        if (isMounted) {
-          setIsLoading(false);
-        }
-      }
-    };
-
-    initializeTasks();
-
-    return () => {
-      isMounted = false;
-    };
-  }, []);
 
   // Adds a new task by calling backend API and updating local state.
   const handleAddTask = async (taskData) => {
@@ -282,6 +353,62 @@ function App() {
     }
   };
 
+  // If initial auth session check is pending, show a loading placeholder.
+  if (isAuthChecking) {
+    return (
+      <div className="auth-wrapper">
+        <div className="auth-card" style={{ textAlign: 'center', padding: '36px 20px' }}>
+          <span className="auth-brand-badge" style={{ alignSelf: 'center', marginBottom: '12px' }}>
+            PBL
+          </span>
+          <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>
+            Checking authentication session...
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  // If user is unauthenticated, render the appropriate authentication view.
+  if (!currentUser) {
+    return (
+      <div className="app-container">
+        {/* Floating Toast Notifications */}
+        <div className="toast-container" aria-live="polite">
+          {toasts.map((t) => (
+            <div key={t.id} className={`toast toast-${t.tone}`}>
+              {t.message}
+            </div>
+          ))}
+        </div>
+
+        {authView === 'login' && (
+          <Login
+            onLoginSuccess={handleLoginSuccess}
+            onSwitchToRegister={() => setAuthView('register')}
+          />
+        )}
+
+        {authView === 'register' && (
+          <Register
+            onRegisterSuccess={handleRegisterSuccess}
+            onSwitchToLogin={() => setAuthView('login')}
+          />
+        )}
+
+        {authView === 'otp' && (
+          <OtpVerification
+            email={otpContext.email}
+            purpose={otpContext.purpose}
+            onVerificationSuccess={handleVerificationSuccess}
+            onBackToAuth={() => setAuthView('login')}
+          />
+        )}
+      </div>
+    );
+  }
+
+  // Authenticated Dashboard View
   const counts = computeCounts(tasks);
   const pointsBalance = computePointsBalance(tasks);
   const currentStreak = computeStreak(tasks);
@@ -330,6 +457,8 @@ function App() {
         streak={currentStreak}
         isCompact={isCompact}
         onToggleCompact={() => setIsCompact(!isCompact)}
+        currentUser={currentUser}
+        onLogout={handleLogout}
       />
 
       {errorMessage && (

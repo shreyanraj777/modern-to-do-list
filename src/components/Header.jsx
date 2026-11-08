@@ -1,4 +1,4 @@
-// Header.jsx - Compact top bar with live date, gamification metrics, and density toggle
+// Header.jsx - Compact top bar with live date, gamification metrics, user profile, and logout
 import React from 'react';
 
 // Formats today's date into a readable string (e.g., "Wed, Oct 25").
@@ -11,7 +11,14 @@ const formatCurrentDate = () => {
   });
 };
 
-function Header({ points = 0, streak = '0 Days', isCompact = false, onToggleCompact }) {
+function Header({
+  points = 0,
+  streak = '0 Days',
+  isCompact = false,
+  onToggleCompact,
+  currentUser = null,
+  onLogout,
+}) {
   const currentDateStr = formatCurrentDate();
   const pointsFormatted = points > 0 ? `+${points} pts` : `${points} pts`;
 
@@ -53,6 +60,27 @@ function Header({ points = 0, streak = '0 Days', isCompact = false, onToggleComp
           >
             <span>{isCompact ? '⊞' : '⊟'}</span>
             <span>{isCompact ? 'Normal' : 'Compact'}</span>
+          </button>
+        )}
+
+        {currentUser && (
+          <div
+            className="header-user-pill"
+            title={`Logged in as ${currentUser.email}`}
+          >
+            <span>👤</span>
+            <span>{currentUser.name}</span>
+          </div>
+        )}
+
+        {onLogout && (
+          <button
+            type="button"
+            className="header-logout-btn"
+            onClick={onLogout}
+            title="Log out of your account"
+          >
+            <span>Logout</span>
           </button>
         )}
       </div>

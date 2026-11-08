@@ -3,6 +3,7 @@
 @import './dashboard.css';
 @import './taskForm.css';
 @import './taskList.css';
+@import './auth.css';
 
 :root {
   --bg-app: #f1f5f9;

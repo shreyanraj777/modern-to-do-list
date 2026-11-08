@@ -1,9 +1,15 @@
-// models/Task.js - Mongoose Schema for Task items with deadlines, priorities, and scoring
+// models/Task.js - Mongoose Schema for Task items with deadlines, priorities, scoring, and user ownership
 import mongoose from 'mongoose';
 
-// Schema definition for Task documents storing task details, deadlines, and scoring metrics.
+// Schema definition for Task documents storing task details, deadlines, scoring metrics, and user ownership.
 const taskSchema = new mongoose.Schema(
   {
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      index: true,
+      default: null,
+    },
     title: {
       type: String,
       required: true,
